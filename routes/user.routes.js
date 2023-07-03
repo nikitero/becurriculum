@@ -1,8 +1,12 @@
-const express = require("express");
-
+const express = require('express');
+const mongoose = require('mongoose');
 const User = require('../models/User');
+const fileMiddleware = require('../middlewares/file.middleware');
+const imageToUri = require('image-to-uri');
+const fs = require("fs");
 
 const router = express.Router();
+
 
 //GET
 //All Users http://localhost:3000/users
@@ -60,8 +64,11 @@ router.get('/dni/:dni', (req,res) => {
 
 //CREATE 
 //Create a user http://localhost:3000/users/create
-router.post('/create', async (req, res, next) => {
+router.post('/create', [fileMiddleware.upload.single('picture'), fileMiddleware.uploadToCloudinary], async (req, res, next) => {
     try {
+    const userPicture = req.file ? req.file.filename : null; //En esta linea le estamos diciendo que si existe nos devuelva el archivo por su nombre y que si no devuelva un null.
+
+    //const userPicture = req.file ? req.file.filename : null;
       // Crearemos una instancia de character con los datos enviados
     const newUser = new User({
             name: req.body.name,
@@ -71,36 +78,20 @@ router.post('/create', async (req, res, next) => {
             age: req.body.age,
             nationality: req.body.nationality,
             phoneNumber: req.body.phoneNumber,
-            education:{ 
-                secondary: {
-                    title: req.body.title,
-                    years: req.body.years,
-                    place: req.body.place,
-                },
-                university:{
-                    title: req.body.title,
-                    years: req.body.years,
-                    place: req.body.place,
-                },
-                additional:{
-                    title: req.body.title,
-                    years: req.body.years,
-                    place: req.body.place,
-                },
-            },
-            jobExperience: req.body.jobExperience
+            picture: userPicture
     });
 
       // Guardamos el personaje en la DB
     const createdUser = await newUser.save();
+    //fs.unlinkSync(userPicture);//Removing the image from the local folder "public"
     return res.status(201).json(createdUser);
     } catch (error) {
         if (error.code === 11000) {
-            // Código 11000 indica duplicado en índice único
-            console.error('Ya existe un usuario con ese pasaporte, DNI o número de teléfono.');
-            return res.status(404).json('Ya existe un usuario con ese pasaporte, DNI o número de teléfono');
+            // Código 11000 indica duplicado en índice único (passport)
+            console.error('Ya existe un usuario con ese pasaporte');
+            return res.status(404).json('Ya existe un usuario con ese pasaporte');
         } else {
-            // Otro error
+            // Cualquier otro error
         next(error);
         }
     }

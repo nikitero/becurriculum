@@ -1,6 +1,8 @@
 const express = require("express");
-const logError = require('./utils/log')
+const logError = require('./utils/log');//Gestión de errores
 const User = require('./models/User');
+const path = require('path');
+require('dotenv').config();
 
 
 //DataBase
@@ -15,8 +17,8 @@ const server = express();
 const router = express.Router();
 
 //Middlewares
-server.use(express.json())
-server.use(express.urlencoded({ extended:false })) 
+server.use(express.json());
+server.use(express.urlencoded({ extended:false }));
 server.use("/", router);
 server.use('/users', userRoutes);
 

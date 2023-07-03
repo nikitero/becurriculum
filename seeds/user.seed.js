@@ -14,24 +14,7 @@ const userList = [
     age: 32,
     nationality: 'Letonia',
     phoneNumber:'622529583',
-    education:{ 
-        secondary:{
-            title:'La escuela de Mikhail Lomonosov',
-            years: '1996-2009',
-            place: 'Latvia,Riga',
-        },
-        university:{
-            title:'Universidad de Salamanca',
-            years: '',
-            place: 'España, Castilla y León, Salamanca',
-        },
-        additional:{
-            title:'',
-            years: '',
-            place: '',
-        },
-    },
-    jobExperience:''
+    picture:''
   }
 ];
 
