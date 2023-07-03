@@ -1,9 +1,7 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const User = require('../models/User');
 const fileMiddleware = require('../middlewares/file.middleware');
-const imageToUri = require('image-to-uri');
-const fs = require("fs");
+
 
 const router = express.Router();
 
@@ -13,12 +11,11 @@ const router = express.Router();
 router.get('/', (req,res) => {
     return User.find()
     .then(users => {
-        // Si encontramos los personajes, los devolveremos al usuario
+        //Returning the list of the users
         console.log(users);
         return res.status(200).json(users);
     })
     .catch(err => {
-        // Si hay un error, enviaremos por ahora una respuesta de error.
         return res.status(500).json(err);
     });
 });
@@ -37,7 +34,6 @@ router.get('/:id', (req,res) => {
     }
     })
     .catch(err => {
-        // Si hay un error, enviaremos por ahora una respuesta de error.
         return res.status(500).json(err);
     });
 });
@@ -56,7 +52,6 @@ router.get('/dni/:dni', (req,res) => {
     }
     })
     .catch(err => {
-        // Si hay un error, enviaremos por ahora una respuesta de error.
         return res.status(500).json(err);
     });
 });
@@ -66,10 +61,8 @@ router.get('/dni/:dni', (req,res) => {
 //Create a user http://localhost:3000/users/create
 router.post('/create', [fileMiddleware.upload.single('picture'), fileMiddleware.uploadToCloudinary], async (req, res, next) => {
     try {
-    const userPicture = req.file ? req.file.filename : null; //En esta linea le estamos diciendo que si existe nos devuelva el archivo por su nombre y que si no devuelva un null.
+    const userPicture = req.file_url ? req.file_url : null;
 
-    //const userPicture = req.file ? req.file.filename : null;
-      // Crearemos una instancia de character con los datos enviados
     const newUser = new User({
             name: req.body.name,
             surname: req.body.surname,
@@ -81,17 +74,16 @@ router.post('/create', [fileMiddleware.upload.single('picture'), fileMiddleware.
             picture: userPicture
     });
 
-      // Guardamos el personaje en la DB
+    //Saving user in the Data Base
     const createdUser = await newUser.save();
-    //fs.unlinkSync(userPicture);//Removing the image from the local folder "public"
     return res.status(201).json(createdUser);
     } catch (error) {
         if (error.code === 11000) {
-            // Código 11000 indica duplicado en índice único (passport)
+            // Code 11000 shows the error in the unique fields
             console.error('Ya existe un usuario con ese pasaporte');
             return res.status(404).json('Ya existe un usuario con ese pasaporte');
         } else {
-            // Cualquier otro error
+
         next(error);
         }
     }
@@ -101,11 +93,11 @@ router.post('/create', [fileMiddleware.upload.single('picture'), fileMiddleware.
 //PUT http://localhost:3000/users/6483465ba53ee57033b1875d
 router.put('/edit/:id', async (req, res, next) => {
     try {
-        const { id } = req.params //Recuperamos el id de la url
-        const userModify = new User(req.body) //instanciamos un nuevo User con la información del body
-        userModify._id = id //añadimos la propiedad _id al personaje creado
+        const { id } = req.params //Recovering the ID from the URL
+        const userModify = new User(req.body) //Creating a new User
+        userModify._id = id //Adding the id from the URl to the new User URL
         const characterUpdated = await User.findByIdAndUpdate(id , userModify)
-        return res.status(200).json(characterUpdated)//Este personaje que devolvemos es el anterior a su modificación
+        return res.status(200).json(characterUpdated)//Returning the info of the User before it has been changed
     } catch (error) {
         return next(error)
     }
