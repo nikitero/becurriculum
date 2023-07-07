@@ -4,12 +4,16 @@ const User = require('./models/User');
 const path = require('path');
 require('dotenv').config();
 
+//Auth
+const jwt = require("jsonwebtoken");
+
 
 //DataBase
 require('./db');
 
-//Routes
+//Requiring routes
 const userRoutes = require('./routes/user.routes');
+const loggedUserRoutes = require('./routes/loggedUser.routes');
 
 //Server config
 const PORT = 3000;
@@ -19,8 +23,18 @@ const router = express.Router();
 //Middlewares
 server.use(express.json());
 server.use(express.urlencoded({ extended:false }));
+server.use((req, res, next) => {
+  res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
+server.set("secretKey", "nodeRestApi"); 
+
+//Routes
 server.use("/", router);
 server.use('/users', userRoutes);
+server.use('/loggedUser', loggedUserRoutes)
 
 //Control de errores
 server.use('*', (req, res, next) => {

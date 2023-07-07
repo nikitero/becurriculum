@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require('../models/User');
 const fileMiddleware = require('../middlewares/file.middleware');
+const { isAuth } =  require("../auth/jwt");
 
 
 const router = express.Router();
@@ -8,7 +9,7 @@ const router = express.Router();
 
 //GET
 //All Users http://localhost:3000/users
-router.get('/', (req,res) => {
+router.get('/', [isAuth], (req,res) => {
     return User.find()
     .then(users => {
         //Returning the list of the users
