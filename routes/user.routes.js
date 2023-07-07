@@ -9,7 +9,7 @@ const router = express.Router();
 
 //GET
 //All Users http://localhost:3000/users
-router.get('/', [isAuth], (req,res) => {
+router.get('/',  (req,res) => {
     return User.find()
     .then(users => {
         //Returning the list of the users
@@ -60,7 +60,7 @@ router.get('/dni/:dni', (req,res) => {
 
 //CREATE 
 //Create a user http://localhost:3000/users/create
-router.post('/create', [fileMiddleware.upload.single('picture'), fileMiddleware.uploadToCloudinary], async (req, res, next) => {
+router.post('/create', [isAuth], [fileMiddleware.upload.single('picture'), fileMiddleware.uploadToCloudinary], async (req, res, next) => {
     try {
     const userPicture = req.file_url ? req.file_url : null;
 
@@ -92,7 +92,7 @@ router.post('/create', [fileMiddleware.upload.single('picture'), fileMiddleware.
 
 
 //PUT http://localhost:3000/users/6483465ba53ee57033b1875d
-router.put('/edit/:id', async (req, res, next) => {
+router.put('/edit/:id', [isAuth], async (req, res, next) => {
     try {
         const { id } = req.params //Recovering the ID from the URL
         const userModify = new User(req.body) //Creating a new User
@@ -106,7 +106,7 @@ router.put('/edit/:id', async (req, res, next) => {
 
 
 //DELETE http://localhost:3000/users/6483465ba53ee57033b1875d
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', [isAuth], async (req, res, next) => {
     try {
         const {id} = req.params;
         await User.findByIdAndDelete(id);
