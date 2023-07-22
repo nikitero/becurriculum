@@ -7,16 +7,17 @@ require('dotenv').config();
 //Auth
 const jwt = require("jsonwebtoken");
 
+//Utils
+const {connect} = require('./db')
 
-//DataBase
-require('./db');
 
 //Requiring routes
 const userRoutes = require('./routes/user.routes');
 const loggedUserRoutes = require('./routes/loggedUser.routes');
 
 //Server config
-const PORT = 3000;
+connect();
+const PORT = process.env.PORT || 4000;
 const server = express();
 const router = express.Router();
 

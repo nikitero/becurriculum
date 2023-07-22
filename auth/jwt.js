@@ -1,22 +1,18 @@
-// Cargamos el modelo 
 const LoggedUser = require("../models/LoggedUser");
-
 const bcrypt = require("bcrypt");
-
 const jwt = require("jsonwebtoken");
 
-
-
+//Register function (registering and login after the user is registered)
 const register = async (req, res, next) => {
 try {
     const existingUser = await LoggedUser.findOne({ email: req.body.email });
 
     if (existingUser) {
         return res.status(400).json({
-          status: 400,
-          message: 'User already exists',
+            status: 400,
+            message: 'User already exists',
         });
-      }
+    }
 
     const newUser = new LoggedUser();
     newUser.email = req.body.email;
@@ -38,15 +34,16 @@ try {
 }
 }
 
+//Login Function
 const login = async (req, res, next) => {
 try {
-    //Buscamos al user en bd
+    //Checking if the user exists in DB
     const userInfo = await LoggedUser.findOne({ email: req.body.email })
-    //Comparamos la contraseña
+    //Comparing the entered password with the one that is stored in DB
     if (bcrypt.compareSync(req.body.password, userInfo.password)) {
-      //eliminamos la contraseña del usuario
+    //Removing entered password
     userInfo.password = null
-      //creamos el token con el id y el name del user
+    //Creating the token with user id and e-mail
     const token = jwt.sign(
     {
         id: userInfo._id,
@@ -55,7 +52,7 @@ try {
         req.app.get("secretKey"),
     { expiresIn: "1h" }
     );
-      //devolvemos el usuario y el token.
+    //Returning the user info and the bearer token.
     return res.json({
         status: 200,
         message: 'Logged in sucessfully!',
@@ -84,19 +81,16 @@ try {
 
 const isAuth = (req, res, next) => {
     
-const authorization = req.headers.authorization //si en el header existe authorization lo guardamos en una variable. 
-//Esta tiene el formato: bearer token
-    
-if(!authorization){ //Se comprueba que exista autorización
+const authorization = req.headers.authorization //if authorization header exists it´s saved in the variable
+
+if(!authorization){ //Checking if the there is an authorization header
     return res.json({
         status: 401,
         message: "Unauthorized",
         data: null
     })
 }
-
-const splits = authorization.split(" ")//troceamos el token en dos partes
-//en la primera quitamos la palabra Bearer
+const splits = authorization.split(" ")//Splitting authorization response in two string
 if( splits.length!=2 || splits[0]!="Bearer"){ //
     return res.json({
         status: 400,
@@ -104,8 +98,7 @@ if( splits.length!=2 || splits[0]!="Bearer"){ //
         data: null
     })
 }
-
-const jwtString = splits[1] // En esta variable guardamos la parte que contiene la información del token
+const jwtString = splits[1] // Saving the token in a variable
     
 try {
     var token = jwt.verify(jwtString, req.app.get("secretKey")); //verificamos que el token tiene una firma correcta
@@ -121,8 +114,6 @@ try {
     req.authority = authority
     next()
 }
-
-
 
 
 module.exports = {

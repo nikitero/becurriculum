@@ -6,7 +6,6 @@ const { isAuth } =  require("../auth/jwt");
 
 const router = express.Router();
 
-
 //GET
 //All Users http://localhost:3000/users
 router.get('/',  (req,res) => {

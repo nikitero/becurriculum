@@ -1,3 +1,5 @@
 
 1) Securizar las rutas con isAuth
 2) Renombrar los modelos y las dependencias a Candidates y Users
+3) Desplegar en netlify
+4) Crear un nuevo modelo en la DB

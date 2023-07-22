@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 
 // Imporatmos el modelo Pet en este nuevo archivo.
 const User = require('../models/User');
+const { DB_URL } = require('../db')
 
 const userList = [
   {
@@ -23,7 +24,7 @@ const userDocuments = userList.map(user => new User(user));
 // En este caso, nos conectaremos de nuevo a nuestra base de datos
 // pero nos desconectaremos tras insertar los documentos
 mongoose
-  .connect('mongodb://0.0.0.0:27017/curriculum', {
+  .connect( DB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
