@@ -33,6 +33,10 @@ server.use((req, res, next) => {
 });
 server.set("secretKey", "nodeRestApi"); 
 
+server.get('/',(req,res)=>{
+  res.send('This is my Back End')
+})
+
 //Routes
 server.use("/", router);
 server.use('/users', userRoutes);
