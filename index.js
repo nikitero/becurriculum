@@ -1,7 +1,7 @@
 const express = require("express");
-const logError = require('../utils/log');//Gestión de errores
-const User = require('../models/User');
-const logUs = require('../models/LoggedUser')
+const logError = require('./utils/log');//Gestión de errores
+const User = require('./models/User');
+const logUs = require('./models/LoggedUser')
 const path = require('path');
 require('dotenv').config();
 
@@ -9,12 +9,12 @@ require('dotenv').config();
 const jwt = require("jsonwebtoken");
 
 //Utils
-const {connect} = require('../db')
+const {connect} = require('./db')
 
 
 //Requiring routes
-const userRoutes = require('../routes/user.routes');
-const loggedUserRoutes = require('../routes/loggedUser.routes');
+const userRoutes = require('./routes/user.routes');
+const loggedUserRoutes = require('./routes/loggedUser.routes');
 
 //Server config
 connect();
