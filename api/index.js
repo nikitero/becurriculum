@@ -1,11 +1,12 @@
 const express = require("express");
 const logError = require('../utils/log');//Gestión de errores
 const User = require('../models/User');
+const logUs = require('../models/LoggedUser')
 const path = require('path');
 require('dotenv').config();
 
 //Auth
-//const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
 //Utils
 const {connect} = require('../db')
@@ -35,7 +36,7 @@ server.set("secretKey", "nodeRestApi");
 //Routes
 server.use("/", router);
 server.use('/users', userRoutes);
-//server.use('/loggedUser', loggedUserRoutes)
+server.use('/loggedUser', loggedUserRoutes)
 
 //Control de errores
 server.use('*', (req, res, next) => {
