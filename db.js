@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-require('dotcenv').config();
+require('dotenv').config();
 
 
 // URL local de nuestra base de datos en mongoose y su nombre upgrade_class_3
